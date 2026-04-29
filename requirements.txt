@@ -1,0 +1,3 @@
+PyDictionary
+pytz
+webbrowser
