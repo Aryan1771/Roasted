@@ -1,3 +1,2 @@
 PyDictionary
 pytz
-webbrowser

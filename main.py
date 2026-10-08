@@ -1,3 +1,6 @@
+from arithmetic import calculate
+
+
 def Main():
   import re
   import random as r
@@ -12,10 +15,11 @@ def Main():
   from getpass import getpass as g
   dictionary = PyDictionary()
   os.environ['TZ'] = 'Asia/Kolkata'
-  t.tzset()
+  if hasattr(t, "tzset"):
+    t.tzset()
   IST = pytz.timezone('Asia/Kolkata')
   def timothy():
-    x = eval(str(d.now(timezone.utc).astimezone(IST).isoformat())[11:13])
+    x = d.now(timezone.utc).astimezone(IST).hour
     if x >= 0 and x < 12:
       return "Good Morning"
     elif x == 12:
@@ -25,7 +29,7 @@ def Main():
     elif x > 16:
       return "Good Evening"
   def tim():
-    x = eval(str(d.now(timezone.utc).astimezone(IST).isoformat())[11:13])
+    x = d.now(timezone.utc).astimezone(IST).hour
     if x >= 20:
       return True
     else:
@@ -196,22 +200,23 @@ def Main():
     response = check_all_messages(split_message, bot, creator)
     return response
   def filesearch(roar, f, us, u, lister):
-    for row in csv.reader(f):
-      if us == row[roar]:
-        clear()
-        us = input(f"{u.title()} already taken\nEnter a different {u}\n")
-        filesearch(roar, f, us, u)
+    f.seek(0)
+    taken = {row[roar] for row in csv.reader(f) if len(row) > roar}
+    while us in taken:
+      clear()
+      us = input(f"{u.title()} already taken\nEnter a different {u}\n")
     lister += [us]
     return True
   def fileresearch(f):
-    username = input("Enter your username:\n")
-    passwd = g("Password:\n")
-    for row in csv.reader(f):
-      if username == row[0] and passwd == row[1]:
-        return row[2]
-    clear()
-    print("Incorrect Username or Password")
-    fileresearch(f)
+    while True:
+      username = input("Enter your username:\n")
+      passwd = g("Password:\n")
+      f.seek(0)
+      for row in csv.reader(f):
+        if len(row) >= 3 and username == row[0] and passwd == row[1]:
+          return row[2]
+      clear()
+      print("Incorrect Username or Password")
   def Login(bot):
     entity = input(f'{bot.title()}:Do you have an account Y/N\n').upper()
     if entity == "Y":
@@ -265,10 +270,10 @@ def Main():
               pass
             else:
               ttn += i
-          print(f'{bot.title()}: {eval(ttn)}')
+          print(f'{bot.title()}: {calculate(ttn)}')
         elif sett == "solve":
           print(f'{bot.title()}: Enter your sum')
-          lttt = eval(input(f'{Username_.title()}'))
+          lttt = calculate(input(f'{Username_.title()}'))
           print(f'{bot.title()}: {lttt}:')
         elif sett == "math":
           v = r.randrange(1, 5)
@@ -281,11 +286,11 @@ def Main():
           elif v == 4:
             lnn = f'{r.randint(1,10)}{["+","-","*","/","**"][r.randrange(5)]}{r.randint(1,10)}{["+","-","*","/","**"][r.randrange(5)]}{r.randint(1,10)}{["+","-","*","/","**"][r.randrange(5)]}{r.randint(1,10)}{["+","-","*","/","**"][r.randrange(5)]}{r.randint(1,10)}'
           print(f'{bot.title()}: Solve {lnn}')
-          lttt = eval(input(f'{Username_}:'))
-          if int(eval(lnn)) == lttt or eval(lnn) == lttt:
+          lttt = calculate(input(f'{Username_}:'))
+          if calculate(lnn) == lttt:
             print(f'{bot.title()}: You are correct')
           else:
-            print(f'{bot.title()}: You are wrong, the answer is {eval(lnn)}')
+            print(f'{bot.title()}: You are wrong, the answer is {calculate(lnn)}')
         elif sett == "search":
           l = l.replace(" ", "+")
           xnt = l.lower().replace("search+", "")
